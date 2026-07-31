@@ -1,10 +1,434 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Moja strona</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tymon & Ola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Parisienne&family=Lora:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     PALETA KOLORÓW — jeśli chcesz coś zmienić, edytuj tutaj
+     ============================================================ */
+  :root{
+    --wine: #6B1E2B;        /* głęboka czerwień wina — główny akcent */
+    --plum: #3A1420;        /* ciemne tło hero */
+    --plum-deep: #260C14;
+    --blush: #E9B9BC;       /* delikatny róż */
+    --cream: #FFF7F2;       /* tło reszty strony */
+    --cream-warm: #FBEEE6;
+    --gold: #C9A15A;        /* złoty akcent */
+    --ivory: #FFF9F5;
+    --ink: #3A1420;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Lora', serif;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3{ font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  .script{ font-family: 'Parisienne', cursive; }
+
+  .eyebrow{
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    color: var(--gold);
+  }
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 20%, var(--wine) 0%, var(--plum) 55%, var(--plum-deep) 100%);
+    color: var(--ivory);
+    padding: 2rem;
+    overflow: hidden;
+  }
+
+  .hero .eyebrow{ color: var(--blush); margin-bottom: 1.2rem; opacity: 0.9; }
+
+  .hero h1{
+    font-size: clamp(3rem, 10vw, 6.5rem);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .hero .amp{
+    display: block;
+    font-family: 'Parisienne', cursive;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    color: var(--gold);
+    margin: 0.3rem 0;
+  }
+
+  .hero-divider{
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 1.8rem 0;
+    opacity: 0.7;
+  }
+
+  .hero-date{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    color: var(--blush);
+  }
+
+  .counter{
+    margin-top: 0.6rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--ivory);
+    opacity: 0.85;
+  }
+  .counter strong{
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .scroll-hint{
+    position: absolute;
+    bottom: 2.2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--blush);
+    opacity: 0.7;
+  }
+
+  /* unoszące się serduszka — subtelne, powolne */
+  .hearts{ position:absolute; inset:0; pointer-events:none; }
+  .hearts span{
+    position:absolute;
+    bottom:-10%;
+    color: var(--blush);
+    opacity: 0.35;
+    font-size: 1.2rem;
+    animation: float 14s linear infinite;
+  }
+  @keyframes float{
+    0%{ transform: translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.4; }
+    90%{ opacity:0.25; }
+    100%{ transform: translateY(-115vh) rotate(20deg); opacity:0; }
+  }
+
+  /* ============================================================
+     SEKCJA — KOPERTA / LIŚCIK (element-sygnatura strony)
+     ============================================================ */
+  .letter-section{
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding: 5rem 1.5rem;
+    text-align:center;
+    background: var(--cream);
+  }
+
+  .letter-section .eyebrow{ margin-bottom: 0.8rem; }
+  .letter-section h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 2.5rem; color: var(--wine); }
+
+  .envelope-wrap{
+    position: relative;
+    width: min(90vw, 380px);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .envelope{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/2;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    box-shadow: 0 20px 40px -15px rgba(58,20,32,0.35);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .flap{
+    position:absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: linear-gradient(135deg, var(--wine), #8a2a3d);
+    clip-path: polygon(0 0, 100% 0, 50% 55%);
+    transform-origin: top center;
+    transition: transform 0.9s cubic-bezier(.6,0,.4,1);
+    z-index: 3;
+  }
+
+  .seal{
+    position:absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 58px; height: 58px;
+    background: radial-gradient(circle at 35% 30%, #d8a54f, var(--gold) 60%, #9c7a3a 100%);
+    border-radius: 50%;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    z-index: 5;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+  }
+  .seal::after{
+    content: "T & O";
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: #4a3413;
+  }
+
+  .letter-paper{
+    position: absolute;
+    top: 6%;
+    left: 8%;
+    width: 84%;
+    height: 88%;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    border-radius: 2px;
+    padding: 1.6rem 1.4rem;
+    text-align: left;
+    transform: translateY(6%);
+    transition: transform 0.9s cubic-bezier(.6,0,.4,1) 0.15s;
+    z-index: 2;
+    overflow-y: auto;
+  }
+
+  .letter-paper .to{
+    font-family: 'Parisienne', cursive;
+    font-size: 1.5rem;
+    color: var(--wine);
+    margin-bottom: 0.8rem;
+    display: block;
+  }
+
+  .letter-paper p{
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .letter-paper .signed{
+    display:block;
+    margin-top: 1.2rem;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.3rem;
+    color: var(--wine);
+    text-align: right;
+  }
+
+  /* stan otwarty */
+  .envelope-wrap.open .flap{ transform: rotateX(180deg); }
+  .envelope-wrap.open .seal{ opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(25deg); }
+  .envelope-wrap.open .letter-paper{ transform: translateY(-14%); }
+
+  .tap-hint{
+    margin-top: 1.4rem;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: var(--wine);
+    opacity: 0.7;
+  }
+  .envelope-wrap.open ~ .tap-hint{ opacity: 0; }
+
+  /* ============================================================
+     GALERIA
+     ============================================================ */
+  .gallery-section{
+    padding: 5rem 1.5rem 6rem;
+    background: var(--cream-warm);
+    text-align: center;
+  }
+
+  .gallery-section .eyebrow{ margin-bottom: 0.8rem; }
+  .gallery-section h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--wine); margin-bottom: 3rem; }
+
+  .gallery{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 2.2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .polaroid{
+    background: var(--ivory);
+    padding: 0.8rem 0.8rem 1.6rem;
+    box-shadow: 0 12px 24px -12px rgba(58,20,32,0.3);
+    transform: rotate(var(--tilt, -2deg));
+    transition: transform 0.3s ease;
+  }
+  .polaroid:nth-child(2n){ --tilt: 2deg; }
+  .polaroid:nth-child(3n){ --tilt: -1deg; }
+  .polaroid:hover{ transform: rotate(0deg) scale(1.03); }
+
+  .polaroid .frame{
+    aspect-ratio: 1/1;
+    background: repeating-linear-gradient(45deg, var(--blush) 0 2px, transparent 2px 10px);
+    background-color: #f6e3e0;
+    border: 1px dashed var(--wine);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--wine);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 1rem;
+  }
+
+  .polaroid .caption{
+    margin-top: 0.7rem;
+    font-family: 'Parisienne', cursive;
+    font-size: 1.1rem;
+    color: var(--wine);
+  }
+
+  /* ============================================================
+     STOPKA
+     ============================================================ */
+  footer{
+    background: var(--plum-deep);
+    color: var(--blush);
+    text-align: center;
+    padding: 2.5rem 1.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.1em;
+    font-size: 0.85rem;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hearts span{ animation: none; display:none; }
+    html{ scroll-behavior: auto; }
+  }
+</style>
 </head>
 <body>
-  <h1>HELOŁess</h1>
+
+  <!-- ============================================================
+       HERO
+       ============================================================ -->
+  <section class="hero">
+    <div class="hearts">
+      <span style="left:10%; animation-delay:0s;">♥</span>
+      <span style="left:25%; animation-delay:3s; font-size:0.9rem;">♥</span>
+      <span style="left:45%; animation-delay:6s;">♥</span>
+      <span style="left:65%; animation-delay:2s; font-size:0.8rem;">♥</span>
+      <span style="left:80%; animation-delay:8s;">♥</span>
+      <span style="left:55%; animation-delay:10s; font-size:0.9rem;">♥</span>
+    </div>
+
+    <div class="eyebrow">Historia dwojga</div>
+    <h1>
+      Tymon
+      <span class="amp">&amp;</span>
+      Ola
+    </h1>
+    <div class="hero-divider"></div>
+    <div class="hero-date">Razem od 1 kwietnia 2026</div>
+    <div class="counter">Czyli już <strong id="dayCount">—</strong> dni razem</div>
+
+    <div class="scroll-hint">przewiń w dół ↓</div>
+  </section>
+
+  <!-- ============================================================
+       LIŚCIK — kliknij pieczęć, żeby otworzyć kopertę
+       EDYCJA: zmień treść listu w <p> poniżej
+       ============================================================ -->
+  <section class="letter-section">
+    <div class="eyebrow">Dla Ciebie</div>
+    <h2>Jedna wiadomość, zanim pójdziesz dalej</h2>
+
+    <div class="envelope-wrap" id="envelope" onclick="document.getElementById('envelope').classList.toggle('open')">
+      <div class="envelope">
+        <div class="letter-paper">
+          <span class="to">Kochana Olu,</span>
+          <!-- EDYCJA: tutaj wstaw swoją wiadomość -->
+          <p>
+            Chciałem, żebyś miała miejsce, które jest tylko nasze — bez pośpiechu,
+            bez tłumu, tylko Ty, ja i to wszystko, co między nami. Od 1 kwietnia
+            liczę dni tak, jakby każdy z nich był małym prezentem. Dziękuję, że
+            jesteś dokładnie taka, jaka jesteś, i że pozwalasz mi być przy Tobie.
+          </p>
+          <span class="signed">Twój Tymon</span>
+        </div>
+        <div class="flap"></div>
+        <div class="seal"></div>
+      </div>
+      <div class="tap-hint">dotknij pieczęci, aby otworzyć</div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       GALERIA
+       EDYCJA: zamień <div class="frame">...</div> na
+       <img src="twoje-zdjecie.jpg" alt="opis" class="frame" style="object-fit:cover;">
+       i podmień podpisy w <div class="caption">
+       ============================================================ -->
+  <section class="gallery-section">
+    <div class="eyebrow">Nasze chwile</div>
+    <h2>Kilka wspomnień</h2>
+
+    <div class="gallery">
+      <div class="polaroid">
+        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie1.jpg")</div>
+        <div class="caption">pierwszy raz</div>
+      </div>
+      <div class="polaroid">
+        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie2.jpg")</div>
+        <div class="caption">nasz spacer</div>
+      </div>
+      <div class="polaroid">
+        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie3.jpg")</div>
+        <div class="caption">ten dzień</div>
+      </div>
+      <div class="polaroid">
+        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie4.jpg")</div>
+        <div class="caption">Ty i ja</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Tymon &amp; Ola · od 1 kwietnia 2026
+  </footer>
+
+  <script>
+    // Licznik dni razem — liczony automatycznie od 1 kwietnia 2026
+    const startDate = new Date('2026-04-01T00:00:00');
+    const today = new Date();
+    const diffDays = Math.max(0, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)));
+    document.getElementById('dayCount').textContent = diffDays;
+  </script>
+
 </body>
 </html>
+
