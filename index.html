@@ -569,6 +569,164 @@
   }
 
   /* ============================================================
+     SEKCJA — LISTA MARZEŃ / RZECZY DO ZROBIENIA RAZEM
+     ============================================================ */
+  .bucket-section{ background: var(--cream); }
+
+  .bucket-list{
+    list-style: none;
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .bucket-item{
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    cursor: pointer;
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  .bucket-item:hover{ border-color: var(--wine); }
+  .bucket-item.checked{ background: #f6ede4; }
+
+  .bucket-box{
+    flex: none;
+    width: 22px;
+    height: 22px;
+    margin-top: 0.15rem;
+    border: 2px solid var(--wine);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: transparent;
+    transition: all 0.2s ease;
+  }
+  .bucket-item.checked .bucket-box{
+    background: var(--wine);
+    color: var(--gold);
+  }
+
+  .bucket-text{
+    font-size: 0.98rem;
+    line-height: 1.5;
+    color: var(--ink);
+    transition: opacity 0.25s ease;
+  }
+  .bucket-item.checked .bucket-text{
+    text-decoration: line-through;
+    opacity: 0.55;
+  }
+
+  .bucket-progress{
+    max-width: 480px;
+    margin: 0 auto 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: var(--gold);
+  }
+
+  /* ============================================================
+     SEKCJA — ZAMKNIĘTA NA HASŁO (finałowa niespodzianka)
+     ============================================================ */
+  .locked-section{
+    background: radial-gradient(ellipse at 50% 30%, var(--wine) 0%, var(--plum) 60%, var(--plum-deep) 100%);
+    color: var(--ivory);
+  }
+  .locked-section h2{ color: var(--ivory); }
+  .locked-section .eyebrow{ color: var(--blush); }
+  .locked-section p.hint{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--blush);
+    margin-bottom: 1.6rem;
+  }
+
+  .lock-form{
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .lock-input{
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(233,185,188,0.5);
+    background: rgba(255,255,255,0.08);
+    color: var(--ivory);
+    text-align: center;
+    width: 220px;
+    outline: none;
+  }
+  .lock-input::placeholder{ color: rgba(255,249,245,0.5); }
+  .lock-input:focus{ border-color: var(--gold); }
+
+  .lock-form.shake{ animation: shake 0.4s ease; }
+  @keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-8px); }
+    75%{ transform: translateX(8px); }
+  }
+
+  .locked-content{
+    max-width: 460px;
+    margin: 1.6rem auto 0;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(233,185,188,0.35);
+    border-radius: 10px;
+    padding: 1.8rem 1.6rem;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.7s ease, opacity 0.5s ease, padding 0.7s ease;
+  }
+  .locked-content.open{
+    max-height: 500px;
+    opacity: 1;
+  }
+  .locked-content p{ font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; line-height: 1.7; }
+
+  /* ============================================================
+     PŁYWAJĄCY PRZYCISK MUZYKI
+     ============================================================ */
+  .music-toggle{
+    position: fixed;
+    bottom: 1.4rem;
+    right: 1.4rem;
+    z-index: 50;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--wine), #8a2a3d);
+    border: 2px solid var(--gold);
+    color: var(--ivory);
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -8px rgba(58,20,32,0.6);
+    transition: transform 0.25s ease;
+  }
+  .music-toggle:hover{ transform: scale(1.08); }
+  .music-toggle.playing{ animation: pulse 1.6s ease-in-out infinite; }
+
+  /* ============================================================
      STOPKA
      ============================================================ */
   footer{
@@ -588,6 +746,16 @@
 </style>
 </head>
 <body>
+
+  <!-- ============================================================
+       PŁYWAJĄCY PRZYCISK MUZYKI
+       EDYCJA: podmień src w <audio> na własny plik mp3 (np. "nasza-piosenka.mp3"),
+       wgraj plik audio obok index.html w repozytorium
+       ============================================================ -->
+  <audio id="bgAudio" loop preload="none">
+    <source src="nasza-piosenka.mp3" type="audio/mpeg">
+  </audio>
+  <div class="music-toggle" id="musicToggle" onclick="toggleMusic()">♪</div>
 
   <!-- ============================================================
        HERO
@@ -696,22 +864,33 @@
 
     <div class="gallery">
       <div class="polaroid">
-        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie1.jpg")</div>
-        <div class="caption">pierwszy raz</div>
+        <img src="photos/zdjecie1.jpg" alt="Tymon i Ola" class="frame" style="object-fit:cover;">
+        <div class="caption">nasza kawa w mieście</div>
       </div>
       <div class="polaroid">
-        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie2.jpg")</div>
+        <img src="photos/zdjecie2.jpg" alt="Tymon i Ola" class="frame" style="object-fit:cover;">
         <div class="caption">nasz spacer</div>
       </div>
       <div class="polaroid">
-        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie3.jpg")</div>
+        <img src="photos/zdjecie3.jpg" alt="Tymon i Ola" class="frame" style="object-fit:cover;">
         <div class="caption">ten dzień</div>
       </div>
       <div class="polaroid">
-        <div class="frame">wstaw zdjęcie<br>(np. img src="zdjecie4.jpg")</div>
+        <div class="frame">wstaw zdjęcie<br>(np. img src="photos/zdjecie4.jpg")</div>
         <div class="caption">Ty i ja</div>
       </div>
     </div>
+  </section>
+
+  <!-- ============================================================
+       LISTA MARZEŃ — rzeczy do zrobienia razem
+       EDYCJA: dopisuj / zmieniaj punkty w liście "bucketItems" w <script>
+       ============================================================ -->
+  <section class="bucket-section section-generic">
+    <div class="eyebrow">Plany</div>
+    <h2>Rzeczy, które chcę z Tobą zrobić</h2>
+    <div class="bucket-progress" id="bucketProgress">0 / 0 odhaczone</div>
+    <ul class="bucket-list" id="bucketList"></ul>
   </section>
 
   <!-- ============================================================
@@ -737,6 +916,29 @@
     <div class="eyebrow">Na koniec</div>
     <h2>Kliknij serce</h2>
     <div class="big-heart" id="bigHeart" onclick="burstHearts(event)">♥</div>
+    <div id="eggMessage" style="max-width:420px; margin:1.4rem auto 0; font-family:'Cormorant Garamond', serif; font-size:1.05rem; color:var(--wine); opacity:0; transition: opacity 0.6s ease;">
+      Znalazłaś sekret — kliknęłaś serce 5 razy, dokładnie tyle, ile razy dziennie o Tobie myślę (no, może trochę więcej) 💛
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SEKCJA ZAMKNIĘTA NA HASŁO — ostatnia niespodzianka
+       EDYCJA: zmień hasło w zmiennej "secretPassword" w <script>
+       (domyślnie: data razem w formacie DDMM, czyli 0104)
+       oraz treść w <div class="locked-content">
+       ============================================================ -->
+  <section class="locked-section section-generic">
+    <div class="eyebrow">Ostatnia rzecz</div>
+    <h2>To miejsce jest zamknięte</h2>
+    <p class="hint">Podpowiedź: dzień i miesiąc, kiedy zaczęliśmy być razem (format DDMM)</p>
+    <div class="lock-form" id="lockForm">
+      <input type="text" class="lock-input" id="lockInput" placeholder="wpisz kod" inputmode="numeric">
+      <button class="btn-elegant" onclick="checkPassword()">Odblokuj</button>
+    </div>
+    <div class="locked-content" id="lockedContent">
+      <!-- EDYCJA: tutaj wstaw ostatnią, najbardziej osobistą wiadomość -->
+      <p>Skoro tu jesteś — wiedz, że to nie koniec, tylko początek. Kocham Cię, Olu. Dziękuję, że jesteś moja.</p>
+    </div>
   </section>
 
   <footer>
@@ -916,7 +1118,13 @@
     // ============================================================
     // SERCE + KONFETTI SERDUSZEK
     // ============================================================
+    let heartClicks = 0;
     function burstHearts(e){
+      heartClicks++;
+      if(heartClicks === 5){
+        const msg = document.getElementById('eggMessage');
+        msg.style.opacity = '1';
+      }
       const section = e.currentTarget.closest('.heart-section');
       for(let i = 0; i < 14; i++){
         const h = document.createElement('span');
@@ -930,6 +1138,83 @@
         h.style.fontSize = `${0.9 + Math.random() * 1}rem`;
         section.appendChild(h);
         setTimeout(() => h.remove(), 1500);
+      }
+    }
+
+    // ============================================================
+    // LISTA MARZEŃ / RZECZY DO ZROBIENIA RAZEM
+    // EDYCJA: dopisuj / usuwaj punkty w tej liście, ile chcesz
+    // ============================================================
+    const bucketItems = [
+      "Pojechać razem nad morze",
+      "Zorganizować sobie wspólny wyjazd bez planu, na żywioł",
+      "Ugotować razem coś, czego nigdy wcześniej nie robiliśmy",
+      "Pojechać na koncert ulubionego zespołu",
+      "Zobaczyć razem zachód słońca w wyjątkowym miejscu",
+      "Zrobić sobie wspólną sesję zdjęciową",
+      "Nauczyć się razem czegoś nowego (np. tańczyć)",
+      "Zaplanować podróż na 1 września 2027",
+    ];
+
+    function renderBucketList(){
+      const list = document.getElementById('bucketList');
+      list.innerHTML = bucketItems.map((text, i) => `
+        <li class="bucket-item" data-i="${i}">
+          <span class="bucket-box">✓</span>
+          <span class="bucket-text">${text}</span>
+        </li>`).join('');
+      list.querySelectorAll('.bucket-item').forEach(item => {
+        item.addEventListener('click', () => {
+          item.classList.toggle('checked');
+          updateBucketProgress();
+        });
+      });
+      updateBucketProgress();
+    }
+    function updateBucketProgress(){
+      const total = bucketItems.length;
+      const done = document.querySelectorAll('.bucket-item.checked').length;
+      document.getElementById('bucketProgress').textContent = `${done} / ${total} odhaczone`;
+    }
+    renderBucketList();
+
+    // ============================================================
+    // SEKCJA ZAMKNIĘTA NA HASŁO
+    // EDYCJA: zmień hasło poniżej (domyślnie DDMM daty razem: 0104)
+    // ============================================================
+    const secretPassword = "0104";
+    function checkPassword(){
+      const input = document.getElementById('lockInput');
+      const form = document.getElementById('lockForm');
+      const content = document.getElementById('lockedContent');
+      if(input.value.trim() === secretPassword){
+        content.classList.add('open');
+        form.style.display = 'none';
+        document.querySelector('.locked-section .hint').style.display = 'none';
+      } else {
+        form.classList.remove('shake');
+        void form.offsetWidth;
+        form.classList.add('shake');
+      }
+    }
+    document.getElementById('lockInput').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') checkPassword();
+    });
+
+    // ============================================================
+    // PRZYCISK MUZYKI
+    // ============================================================
+    function toggleMusic(){
+      const audio = document.getElementById('bgAudio');
+      const btn = document.getElementById('musicToggle');
+      if(audio.paused){
+        audio.play().catch(() => {});
+        btn.classList.add('playing');
+        btn.textContent = '♫';
+      } else {
+        audio.pause();
+        btn.classList.remove('playing');
+        btn.textContent = '♪';
       }
     }
   </script>
