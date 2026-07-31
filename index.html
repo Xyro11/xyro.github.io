@@ -160,15 +160,25 @@
     user-select: none;
   }
 
+  /* koperta to tylko warstwa wizualna - list NIE jest w środku,
+     dzięki temu nic się nie ucina ani nie nakłada */
   .envelope{
     position: relative;
     width: 100%;
     aspect-ratio: 3/2;
-    background: var(--ivory);
-    border: 1px solid var(--blush);
-    box-shadow: 0 20px 40px -15px rgba(58,20,32,0.35);
+    background: linear-gradient(160deg, var(--ivory) 0%, var(--cream-warm) 55%, #f3d9d3 100%);
+    border: 1px solid rgba(107,30,43,0.35);
+    box-shadow: 0 22px 44px -16px rgba(58,20,32,0.45), inset 0 0 0 1px rgba(255,255,255,0.4);
     border-radius: 4px;
     overflow: hidden;
+  }
+
+  .envelope::before{
+    /* delikatna linia dolnej "kieszeni" koperty dla efektu 3D */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(107,30,43,0.12) 100%);
   }
 
   .flap{
@@ -177,7 +187,7 @@
     background: linear-gradient(135deg, var(--wine), #8a2a3d);
     clip-path: polygon(0 0, 100% 0, 50% 55%);
     transform-origin: top center;
-    transition: transform 0.9s cubic-bezier(.6,0,.4,1);
+    transition: transform 0.7s cubic-bezier(.6,0,.4,1);
     z-index: 3;
   }
 
@@ -203,21 +213,42 @@
     color: #4a3413;
   }
 
+  .envelope-wrap.open .flap{ transform: rotateX(180deg); }
+  .envelope-wrap.open .seal{ opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(25deg); }
+
+  .tap-hint{
+    margin-top: 1.4rem;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    color: var(--wine);
+    opacity: 0.7;
+    transition: opacity 0.4s ease;
+  }
+  .envelope-wrap.open .tap-hint{ opacity: 0; }
+
+  /* list wysuwa się POD kopertą, w całości, bez ucinania tekstu */
   .letter-paper{
-    position: absolute;
-    top: 6%;
-    left: 8%;
-    width: 84%;
-    height: 88%;
+    max-width: min(90vw, 380px);
+    margin: 0 auto;
     background: var(--ivory);
     border: 1px solid var(--blush);
     border-radius: 2px;
-    padding: 1.6rem 1.4rem;
+    box-shadow: 0 16px 32px -18px rgba(58,20,32,0.3);
     text-align: left;
-    transform: translateY(6%);
-    transition: transform 0.9s cubic-bezier(.6,0,.4,1) 0.15s;
-    z-index: 2;
-    overflow-y: auto;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0 1.6rem;
+    transition: max-height 0.7s cubic-bezier(.6,0,.4,1), opacity 0.5s ease, padding 0.7s ease, margin-top 0.7s ease;
+  }
+
+  .envelope-wrap.open .letter-paper{
+    max-height: 700px;
+    opacity: 1;
+    padding: 1.8rem 1.6rem;
+    margin-top: 1.6rem;
   }
 
   .letter-paper .to{
@@ -242,22 +273,6 @@
     color: var(--wine);
     text-align: right;
   }
-
-  /* stan otwarty */
-  .envelope-wrap.open .flap{ transform: rotateX(180deg); }
-  .envelope-wrap.open .seal{ opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(25deg); }
-  .envelope-wrap.open .letter-paper{ transform: translateY(-14%); }
-
-  .tap-hint{
-    margin-top: 1.4rem;
-    font-family: 'Cormorant Garamond', serif;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    font-size: 0.78rem;
-    color: var(--wine);
-    opacity: 0.7;
-  }
-  .envelope-wrap.open ~ .tap-hint{ opacity: 0; }
 
   /* ============================================================
      GALERIA
@@ -310,6 +325,247 @@
     font-family: 'Parisienne', cursive;
     font-size: 1.1rem;
     color: var(--wine);
+  }
+
+  /* ============================================================
+     WSPÓLNE — przycisk w stylu strony
+     ============================================================ */
+  .btn-elegant{
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--ivory);
+    background: linear-gradient(135deg, var(--wine), #8a2a3d);
+    border: none;
+    padding: 0.9rem 2.2rem;
+    border-radius: 999px;
+    cursor: pointer;
+    box-shadow: 0 10px 24px -10px rgba(107,30,43,0.6);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn-elegant:hover{ transform: translateY(-2px); box-shadow: 0 14px 28px -10px rgba(107,30,43,0.7); }
+  .btn-elegant:active{ transform: translateY(0); }
+
+  .section-generic{
+    padding: 5rem 1.5rem;
+    text-align: center;
+  }
+  .section-generic h2{ font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--wine); margin-bottom: 2.5rem; }
+  .section-generic .eyebrow{ margin-bottom: 0.8rem; }
+
+  /* ============================================================
+     SEKCJA — POWODY, DLA KTÓRYCH CIĘ KOCHAM
+     ============================================================ */
+  .reasons-section{ background: var(--cream); }
+
+  .reason-card{
+    max-width: 480px;
+    margin: 0 auto 2.2rem;
+    min-height: 140px;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    border-radius: 6px;
+    box-shadow: 0 16px 32px -18px rgba(58,20,32,0.3);
+    padding: 2.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .reason-card .quote-mark{
+    position: absolute;
+    top: 0.4rem;
+    left: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    color: var(--blush);
+    line-height: 1;
+  }
+
+  .reason-card p{
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: var(--ink);
+    transition: opacity 0.3s ease;
+  }
+
+  /* ============================================================
+     SEKCJA — ZDRAPKA
+     ============================================================ */
+  .scratch-section{ background: var(--cream-warm); }
+
+  .scratch-wrap{
+    position: relative;
+    width: min(90vw, 420px);
+    height: 220px;
+    margin: 0 auto 1.4rem;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 16px 32px -18px rgba(58,20,32,0.35);
+  }
+
+  .scratch-reveal{
+    position: absolute;
+    inset: 0;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .scratch-reveal p{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--wine);
+    line-height: 1.6;
+  }
+
+  #scratchCanvas{
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: pointer;
+  }
+
+  /* ============================================================
+     SEKCJA — QUIZ "ILE MNIE ZNASZ"
+     ============================================================ */
+  .quiz-section{ background: var(--cream); }
+
+  .quiz-card{
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--ivory);
+    border: 1px solid var(--blush);
+    border-radius: 6px;
+    box-shadow: 0 16px 32px -18px rgba(58,20,32,0.3);
+    padding: 2.2rem 1.8rem;
+  }
+
+  .quiz-question{
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    color: var(--wine);
+    margin-bottom: 1.4rem;
+  }
+
+  .quiz-options{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .quiz-option{
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    background: var(--cream);
+    border: 1px solid var(--blush);
+    border-radius: 999px;
+    padding: 0.7rem 1.2rem;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+    text-align: left;
+  }
+  .quiz-option:hover{ background: var(--blush); border-color: var(--wine); }
+  .quiz-option.correct{ background: #d9ecd2; border-color: #6a9c58; }
+  .quiz-option.wrong{ background: #f0cfd0; border-color: var(--wine); }
+
+  .quiz-progress{
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .quiz-result{
+    font-family: 'Parisienne', cursive;
+    font-size: 1.6rem;
+    color: var(--wine);
+  }
+
+  /* ============================================================
+     SEKCJA — LICZNIK DO WYJAZDU
+     ============================================================ */
+  .countdown-section{
+    background: radial-gradient(ellipse at 50% 30%, var(--wine) 0%, var(--plum) 60%, var(--plum-deep) 100%);
+    color: var(--ivory);
+  }
+  .countdown-section h2{ color: var(--ivory); }
+  .countdown-section .eyebrow{ color: var(--blush); }
+
+  .countdown-grid{
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.6rem;
+  }
+
+  .countdown-box{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(233,185,188,0.35);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    min-width: 84px;
+  }
+  .countdown-box span{
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .countdown-box small{
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    color: var(--blush);
+  }
+
+  /* ============================================================
+     SEKCJA — SERCE
+     ============================================================ */
+  .heart-section{
+    background: var(--cream-warm);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .big-heart{
+    font-size: 5rem;
+    color: var(--wine);
+    display: inline-block;
+    cursor: pointer;
+    animation: pulse 1.8s ease-in-out infinite;
+    user-select: none;
+  }
+  @keyframes pulse{
+    0%, 100%{ transform: scale(1); }
+    50%{ transform: scale(1.14); }
+  }
+
+  .confetti-heart{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: var(--wine);
+    font-size: 1.2rem;
+    pointer-events: none;
+    animation: confetti-fly 1.4s ease-out forwards;
+  }
+  @keyframes confetti-fly{
+    0%{ transform: translate(-50%,-50%) scale(0.6); opacity: 1; }
+    100%{ transform: translate(var(--dx), var(--dy)) scale(1.1) rotate(var(--rot)); opacity: 0; }
   }
 
   /* ============================================================
@@ -388,6 +644,47 @@
   </section>
 
   <!-- ============================================================
+       POWODY, DLA KTÓRYCH CIĘ KOCHAM
+       EDYCJA: zmień listę "reasons" w <script> na dole strony
+       ============================================================ -->
+  <section class="reasons-section section-generic">
+    <div class="eyebrow">Bez końca</div>
+    <h2>Powody (jest ich dużo więcej)</h2>
+    <div class="reason-card">
+      <span class="quote-mark">"</span>
+      <p id="reasonText">Kliknij przycisk, aby odkryć powód…</p>
+    </div>
+    <button class="btn-elegant" onclick="showReason()">Odkryj powód</button>
+  </section>
+
+  <!-- ============================================================
+       ZDRAPKA — niespodzianka pod spodem
+       EDYCJA: zmień treść w <div class="scratch-reveal">
+       ============================================================ -->
+  <section class="scratch-section section-generic">
+    <div class="eyebrow">Zdrapka</div>
+    <h2>Zdrap, żeby odkryć niespodziankę</h2>
+    <div class="scratch-wrap" id="scratchWrap">
+      <div class="scratch-reveal">
+        <!-- EDYCJA: tutaj wstaw treść niespodzianki -->
+        <p>Niespodzianka: zapraszam Cię na randkę, o której jeszcze nie wiesz 🕯️</p>
+      </div>
+      <canvas id="scratchCanvas"></canvas>
+    </div>
+    <div class="tap-hint" style="opacity:0.7;">przesuń palcem / myszką po powierzchni</div>
+  </section>
+
+  <!-- ============================================================
+       QUIZ "ILE MNIE ZNASZ"
+       EDYCJA: zmień pytania/odpowiedzi w liście "quizQuestions" w <script>
+       ============================================================ -->
+  <section class="quiz-section section-generic">
+    <div class="eyebrow">Sprawdzian</div>
+    <h2>Ile mnie znasz?</h2>
+    <div class="quiz-card" id="quizCard"></div>
+  </section>
+
+  <!-- ============================================================
        GALERIA
        EDYCJA: zamień <div class="frame">...</div> na
        <img src="twoje-zdjecie.jpg" alt="opis" class="frame" style="object-fit:cover;">
@@ -417,6 +714,31 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       LICZNIK DO WYJAZDU
+       EDYCJA: zmień datę w <script> (zmienna nextTripDate)
+       ============================================================ -->
+  <section class="countdown-section section-generic">
+    <div class="eyebrow">Co dalej</div>
+    <h2>Nasza następna podróż</h2>
+    <div class="countdown-grid">
+      <div class="countdown-box"><span id="cdDays">–</span><small>dni</small></div>
+      <div class="countdown-box"><span id="cdHours">–</span><small>godz.</small></div>
+      <div class="countdown-box"><span id="cdMinutes">–</span><small>min</small></div>
+      <div class="countdown-box"><span id="cdSeconds">–</span><small>sek</small></div>
+    </div>
+    <div class="hero-date">do 1 września 2027</div>
+  </section>
+
+  <!-- ============================================================
+       SERCE — kliknij, żeby zobaczyć serduszka
+       ============================================================ -->
+  <section class="heart-section section-generic">
+    <div class="eyebrow">Na koniec</div>
+    <h2>Kliknij serce</h2>
+    <div class="big-heart" id="bigHeart" onclick="burstHearts(event)">♥</div>
+  </section>
+
   <footer>
     Tymon &amp; Ola · od 1 kwietnia 2026
   </footer>
@@ -427,8 +749,190 @@
     const today = new Date();
     const diffDays = Math.max(0, Math.floor((today - startDate) / (1000 * 60 * 60 * 24)));
     document.getElementById('dayCount').textContent = diffDays;
+
+    // ============================================================
+    // POWODY, DLA KTÓRYCH CIĘ KOCHAM
+    // EDYCJA: dopisuj / zmieniaj powody w tej liście, ile chcesz
+    // ============================================================
+    const reasons = [
+      "Bo potrafisz mnie rozśmieszyć nawet w gorszy dzień.",
+      "Bo pamiętasz drobiazgi, o których ja bym zapomniał.",
+      "Za Twój sposób patrzenia na świat.",
+      "Bo przy Tobie nie muszę udawać nikogo innego.",
+      "Za to, jak się śmiejesz, kiedy naprawdę Cię rozbawię.",
+      "Bo jesteś pierwszą osobą, o której myślę rano.",
+      "Za cierpliwość, której czasem ja nie mam.",
+      "Bo z Tobą zwykły dzień staje się dobrym dniem.",
+      "Za to, jak mocno się angażujesz w rzeczy, które kochasz.",
+      "Bo umiesz mnie uspokoić samą swoją obecnością.",
+    ];
+    let lastReasonIndex = -1;
+    function showReason(){
+      let idx;
+      do{ idx = Math.floor(Math.random() * reasons.length); }
+      while(idx === lastReasonIndex && reasons.length > 1);
+      lastReasonIndex = idx;
+      const el = document.getElementById('reasonText');
+      el.style.opacity = 0;
+      setTimeout(() => {
+        el.textContent = reasons[idx];
+        el.style.opacity = 1;
+      }, 200);
+    }
+
+    // ============================================================
+    // ZDRAPKA
+    // ============================================================
+    (function initScratch(){
+      const wrap = document.getElementById('scratchWrap');
+      const canvas = document.getElementById('scratchCanvas');
+      const ctx = canvas.getContext('2d');
+
+      function resize(){
+        canvas.width = wrap.clientWidth;
+        canvas.height = wrap.clientHeight;
+        paintOverlay();
+      }
+      function paintOverlay(){
+        const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        grad.addColorStop(0, '#c9a15a');
+        grad.addColorStop(1, '#8a2a3d');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        ctx.font = "600 1rem 'Cormorant Garamond', serif";
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('ZDRAP MNIE', canvas.width/2, canvas.height/2);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      let scratching = false;
+      let revealed = false;
+
+      function getPos(e){
+        const rect = canvas.getBoundingClientRect();
+        const point = e.touches ? e.touches[0] : e;
+        return { x: point.clientX - rect.left, y: point.clientY - rect.top };
+      }
+
+      function scratchAt(x, y){
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function checkRevealed(){
+        if(revealed) return;
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let cleared = 0;
+        for(let i = 3; i < data.length; i += 4 * 20){ if(data[i] === 0) cleared++; }
+        const total = data.length / (4 * 20);
+        if(cleared / total > 0.45){
+          revealed = true;
+          canvas.style.transition = 'opacity 0.6s ease';
+          canvas.style.opacity = '0';
+          setTimeout(() => { canvas.style.pointerEvents = 'none'; }, 600);
+        }
+      }
+
+      function startScratch(e){ scratching = true; scratchAt(getPos(e).x, getPos(e).y); }
+      function moveScratch(e){ if(!scratching) return; const p = getPos(e); scratchAt(p.x, p.y); checkRevealed(); }
+      function endScratch(){ scratching = false; }
+
+      canvas.addEventListener('mousedown', startScratch);
+      canvas.addEventListener('mousemove', moveScratch);
+      window.addEventListener('mouseup', endScratch);
+      canvas.addEventListener('touchstart', startScratch, {passive:true});
+      canvas.addEventListener('touchmove', moveScratch, {passive:true});
+      canvas.addEventListener('touchend', endScratch);
+    })();
+
+    // ============================================================
+    // QUIZ "ILE MNIE ZNASZ"
+    // EDYCJA: zmień pytania, opcje i indeks poprawnej odpowiedzi (correct)
+    // ============================================================
+    const quizQuestions = [
+      { q: "Jaki jest mój ulubiony sposób spędzania wieczoru?", options: ["Impreza w mieście", "Film i coś ciepłego do picia", "Wczesne spanie"], correct: 1 },
+      { q: "Co zawsze mnie rozśmiesza?", options: ["Twoje żarty", "Śmieszne filmiki", "Nic, jestem poważny"], correct: 0 },
+      { q: "Co najbardziej cenię w naszym związku?", options: ["Spokój i szczerość", "Prezenty", "Ciszę"], correct: 0 },
+    ];
+    let quizIndex = 0;
+    let quizScore = 0;
+
+    function renderQuiz(){
+      const card = document.getElementById('quizCard');
+      if(quizIndex >= quizQuestions.length){
+        card.innerHTML = `<div class="quiz-progress">Koniec</div>
+          <div class="quiz-result">Wynik: ${quizScore}/${quizQuestions.length} — i tak jesteś moją bratnią duszą 💛</div>`;
+        return;
+      }
+      const item = quizQuestions[quizIndex];
+      card.innerHTML = `
+        <div class="quiz-progress">Pytanie ${quizIndex + 1} z ${quizQuestions.length}</div>
+        <div class="quiz-question">${item.q}</div>
+        <div class="quiz-options">
+          ${item.options.map((opt, i) => `<button class="quiz-option" data-i="${i}">${opt}</button>`).join('')}
+        </div>`;
+      card.querySelectorAll('.quiz-option').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const chosen = parseInt(btn.dataset.i);
+          card.querySelectorAll('.quiz-option').forEach(b => b.disabled = true);
+          if(chosen === item.correct){
+            btn.classList.add('correct');
+            quizScore++;
+          } else {
+            btn.classList.add('wrong');
+            card.querySelectorAll('.quiz-option')[item.correct].classList.add('correct');
+          }
+          setTimeout(() => { quizIndex++; renderQuiz(); }, 900);
+        });
+      });
+    }
+    renderQuiz();
+
+    // ============================================================
+    // LICZNIK DO WYJAZDU — 1 września 2027
+    // EDYCJA: zmień datę poniżej, żeby policzyć do innego wydarzenia
+    // ============================================================
+    const nextTripDate = new Date('2027-09-01T00:00:00');
+    function updateCountdown(){
+      const now = new Date();
+      let diff = Math.max(0, nextTripDate - now);
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff / (1000*60*60)) % 24);
+      const m = Math.floor((diff / (1000*60)) % 60);
+      const s = Math.floor((diff / 1000) % 60);
+      document.getElementById('cdDays').textContent = d;
+      document.getElementById('cdHours').textContent = h;
+      document.getElementById('cdMinutes').textContent = m;
+      document.getElementById('cdSeconds').textContent = s;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ============================================================
+    // SERCE + KONFETTI SERDUSZEK
+    // ============================================================
+    function burstHearts(e){
+      const section = e.currentTarget.closest('.heart-section');
+      for(let i = 0; i < 14; i++){
+        const h = document.createElement('span');
+        h.className = 'confetti-heart';
+        h.textContent = '♥';
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 80 + Math.random() * 120;
+        h.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+        h.style.setProperty('--dy', `${Math.sin(angle) * dist - 40}px`);
+        h.style.setProperty('--rot', `${(Math.random() * 60 - 30)}deg`);
+        h.style.fontSize = `${0.9 + Math.random() * 1}rem`;
+        section.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }
+    }
   </script>
 
 </body>
 </html>
-
