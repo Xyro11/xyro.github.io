@@ -216,6 +216,15 @@
   .envelope-wrap.open .flap{ transform: rotateX(180deg); }
   .envelope-wrap.open .seal{ opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(25deg); }
 
+  .envelope-wrap.open .envelope{
+    max-height: 0;
+    opacity: 0;
+    border: none;
+    box-shadow: none;
+    margin-bottom: -1px;
+    transition: max-height 0.5s ease 0.55s, opacity 0.3s ease 0.55s;
+  }
+
   .tap-hint{
     margin-top: 1.4rem;
     font-family: 'Cormorant Garamond', serif;
@@ -750,6 +759,53 @@
   .music-toggle.playing{ animation: pulse 1.6s ease-in-out infinite; }
 
   /* ============================================================
+     BRAMKA Z HASŁEM — blokuje całą stronę do czasu wpisania kodu
+     ============================================================ */
+  html.locked, html.locked body{ overflow: hidden; height: 100%; }
+
+  .site-gate{
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    background: radial-gradient(ellipse at 50% 30%, var(--wine) 0%, var(--plum) 55%, var(--plum-deep) 100%);
+    color: var(--ivory);
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  .site-gate.hidden{
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .site-gate .eyebrow{ color: var(--blush); margin-bottom: 1rem; }
+  .site-gate h1{
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    margin-bottom: 0.8rem;
+  }
+  .site-gate p.hint{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    color: var(--blush);
+    margin-bottom: 1.8rem;
+    max-width: 320px;
+  }
+  .site-gate .lock-form{ margin-bottom: 0.6rem; }
+  .site-gate .gate-error{
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.85rem;
+    color: var(--blush);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  .site-gate .gate-error.show{ opacity: 1; }
+
+  /* ============================================================
      STOPKA
      ============================================================ */
   footer{
@@ -769,6 +825,23 @@
 </style>
 </head>
 <body>
+
+  <!-- ============================================================
+       BRAMKA Z HASŁEM — cała strona jest zablokowana, dopóki
+       nie zostanie wpisany poprawny kod
+       EDYCJA: zmień hasło w zmiennej "gatePassword" w <script>
+       (domyślnie: dzień i miesiąc rocznicy w formacie DDMM, czyli 0104)
+       ============================================================ -->
+  <div class="site-gate" id="siteGate">
+    <div class="eyebrow">Zanim wejdziesz</div>
+    <h1 class="script" style="font-size:2.6rem;">Tymon &amp; Ola</h1>
+    <p class="hint">To miejsce jest tylko dla Ciebie. Wpisz kod, żeby wejść.</p>
+    <div class="lock-form" id="gateForm">
+      <input type="text" class="lock-input" id="gateInput" placeholder="wpisz kod" inputmode="numeric">
+      <button class="btn-elegant" onclick="checkGatePassword()">Wejdź</button>
+    </div>
+    <div class="gate-error" id="gateError">Spróbuj jeszcze raz ✦</div>
+  </div>
 
   <!-- ============================================================
        PŁYWAJĄCY PRZYCISK MUZYKI
@@ -814,23 +887,23 @@
     <div class="eyebrow">Dla Ciebie</div>
     <h2>Jedna wiadomość, zanim pójdziesz dalej</h2>
 
-    <div class="envelope-wrap" id="envelope" onclick="document.getElementById('envelope').classList.toggle('open')">
-      <div class="envelope">
-        <div class="letter-paper">
-          <span class="to">Kochana Olu,</span>
-          <!-- EDYCJA: tutaj wstaw swoją wiadomość -->
-          <p>
-            Chciałem, żebyś miała miejsce, które jest tylko nasze — bez pośpiechu,
-            bez tłumu, tylko Ty, ja i to wszystko, co między nami. Od 1 kwietnia
-            liczę dni tak, jakby każdy z nich był małym prezentem. Dziękuję, że
-            jesteś dokładnie taka, jaka jesteś, i że pozwalasz mi być przy Tobie.
-          </p>
-          <span class="signed">Twój Tymon</span>
-        </div>
+    <div class="envelope-wrap" id="envelope">
+      <div class="envelope" onclick="toggleEnvelope()">
         <div class="flap"></div>
         <div class="seal"></div>
       </div>
-      <div class="tap-hint">dotknij pieczęci, aby otworzyć</div>
+      <div class="tap-hint" onclick="toggleEnvelope()">dotknij pieczęci, aby otworzyć</div>
+      <div class="letter-paper" onclick="event.stopPropagation()">
+        <span class="to">Kochana Olu,</span>
+        <!-- EDYCJA: tutaj wstaw swoją wiadomość -->
+        <p>
+          Chciałem, żebyś miała miejsce, które jest tylko nasze — bez pośpiechu,
+          bez tłumu, tylko Ty, ja i to wszystko, co między nami. Od 1 kwietnia
+          liczę dni tak, jakby każdy z nich był małym prezentem. Dziękuję, że
+          jesteś dokładnie taka, jaka jesteś, i że pozwalasz mi być przy Tobie.
+        </p>
+        <span class="signed">Twój Tymon</span>
+      </div>
     </div>
   </section>
 
@@ -941,26 +1014,6 @@
     <div class="big-heart" id="bigHeart" onclick="burstHearts(event)">♥</div>
     <div id="eggMessage" style="max-width:420px; margin:1.4rem auto 0; font-family:'Cormorant Garamond', serif; font-size:1.05rem; color:var(--wine); opacity:0; transition: opacity 0.6s ease;">
       Znalazłaś sekret — kliknęłaś serce 5 razy, dokładnie tyle, ile razy dziennie o Tobie myślę (no, może trochę więcej) 💛
-    </div>
-  </section>
-
-  <!-- ============================================================
-       SEKCJA ZAMKNIĘTA NA HASŁO — ostatnia niespodzianka
-       EDYCJA: zmień hasło w zmiennej "secretPassword" w <script>
-       (domyślnie: data razem w formacie DDMM, czyli 0104)
-       oraz treść w <div class="locked-content">
-       ============================================================ -->
-  <section class="locked-section section-generic">
-    <div class="eyebrow">Ostatnia rzecz</div>
-    <h2>To miejsce jest zamknięte</h2>
-    <p class="hint">Podpowiedź: dzień i miesiąc, kiedy zaczęliśmy być razem (format DDMM)</p>
-    <div class="lock-form" id="lockForm">
-      <input type="text" class="lock-input" id="lockInput" placeholder="wpisz kod" inputmode="numeric">
-      <button class="btn-elegant" onclick="checkPassword()">Odblokuj</button>
-    </div>
-    <div class="locked-content" id="lockedContent">
-      <!-- EDYCJA: tutaj wstaw ostatnią, najbardziej osobistą wiadomość -->
-      <p>Skoro tu jesteś — wiedz, że to nie koniec, tylko początek. Kocham Cię, Olu. Dziękuję, że jesteś moja.</p>
     </div>
   </section>
 
@@ -1202,31 +1255,36 @@
     renderBucketList();
 
     // ============================================================
-    // SEKCJA ZAMKNIĘTA NA HASŁO
+    // PRZYCISK MUZYKI (kod poniżej, funkcja toggleMusic)
+    // ============================================================
+    // ============================================================
+    // BRAMKA Z HASŁEM NA CAŁĄ STRONĘ
     // EDYCJA: zmień hasło poniżej (domyślnie DDMM daty razem: 0104)
     // ============================================================
-    const secretPassword = "0104";
-    function checkPassword(){
-      const input = document.getElementById('lockInput');
-      const form = document.getElementById('lockForm');
-      const content = document.getElementById('lockedContent');
-      if(input.value.trim() === secretPassword){
-        content.classList.add('open');
-        form.style.display = 'none';
-        document.querySelector('.locked-section .hint').style.display = 'none';
+    const gatePassword = "0104";
+    document.documentElement.classList.add('locked');
+
+    function checkGatePassword(){
+      const input = document.getElementById('gateInput');
+      const error = document.getElementById('gateError');
+      if(input.value.trim() === gatePassword){
+        document.getElementById('siteGate').classList.add('hidden');
+        document.documentElement.classList.remove('locked');
       } else {
-        form.classList.remove('shake');
-        void form.offsetWidth;
-        form.classList.add('shake');
+        error.classList.add('show');
+        input.value = '';
+        input.focus();
       }
     }
-    document.getElementById('lockInput').addEventListener('keydown', (e) => {
-      if(e.key === 'Enter') checkPassword();
+    document.getElementById('gateInput').addEventListener('keydown', (e) => {
+      if(e.key === 'Enter') checkGatePassword();
     });
 
-    // ============================================================
-    // PRZYCISK MUZYKI
-    // ============================================================
+    function toggleEnvelope(){
+      const wrap = document.getElementById('envelope');
+      wrap.classList.toggle('open');
+    }
+
     function toggleMusic(){
       const audio = document.getElementById('bgAudio');
       const btn = document.getElementById('musicToggle');
